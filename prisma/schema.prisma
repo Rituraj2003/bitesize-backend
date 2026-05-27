@@ -1,0 +1,17 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Snippet {
+  id               String   @id @default(uuid())
+  title            String
+  bodyText         String   
+  languageTags     String[] 
+  timesReviewed    Int      @default(0)
+  lastReviewedDate DateTime @default(now())
+  createdAt        DateTime @default(now())
+}
