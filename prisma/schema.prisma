@@ -14,4 +14,7 @@ model Snippet {
   timesReviewed    Int      @default(0)
   lastReviewedDate DateTime @default(now())
   createdAt        DateTime @default(now())
+
+  @@index([lastReviewedDate])
+  @@index([createdAt])
 }
