@@ -60,7 +60,7 @@ describe('BiteSize API Integration Tests', () => {
       expect(response.body[0].title).toBe('React Hooks Overview');
     });
 
-    it('should correctly format PostgreSQL Full-Text Search query tokens', async () => {
+    it('should correctly filter snippets by search term', async () => {
       vi.mocked(prisma.snippet.findMany).mockResolvedValue([]);
 
       const response = await request(app).get('/api/snippets?search=react hooks');
@@ -71,8 +71,8 @@ describe('BiteSize API Integration Tests', () => {
             AND: expect.arrayContaining([
               {
                 OR: [
-                  { title: { search: 'react & hooks' } },
-                  { bodyText: { search: 'react & hooks' } },
+                  { title: { contains: 'react hooks', mode: 'insensitive' } },
+                  { bodyText: { contains: 'react hooks', mode: 'insensitive' } },
                 ],
               },
             ]),

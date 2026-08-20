@@ -25,24 +25,15 @@ router.get('/snippets', async (req: Request, res: Response, next: NextFunction) 
 
     const conditions: any[] = [];
 
-    // Safe Full-Text Search Token Filter
+    // Flexible Search Filter (supports partial typing like 'r', 're', 'react')
     if (search && typeof search === 'string' && search.trim() !== '') {
-      // Sanitize special Postgres search characters to prevent syntax errors
-      const sanitized = search
-        .trim()
-        .replace(/[&|!():*]/g, ' ')
-        .split(/\s+/)
-        .filter(Boolean)
-        .join(' & ');
-
-      if (sanitized) {
-        conditions.push({
-          OR: [
-            { title: { search: sanitized } },
-            { bodyText: { search: sanitized } },
-          ],
-        });
-      }
+      const searchTerm = search.trim();
+      conditions.push({
+        OR: [
+          { title: { contains: searchTerm, mode: 'insensitive' } },
+          { bodyText: { contains: searchTerm, mode: 'insensitive' } },
+        ],
+      });
     }
 
     // Multi-tag relational scanning
