@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '../db/prisma.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { logger } from '../utils/logger.js';
+import { fromSync } from 'node:stream/iter';
 
 const router = Router();
 
@@ -28,10 +29,12 @@ router.get('/snippets', async (req: Request, res: Response, next: NextFunction) 
     // Flexible Search Filter (supports partial typing like 'r', 're', 'react')
     if (search && typeof search === 'string' && search.trim() !== '') {
       const searchTerm = search.trim();
+      const formattedSearch=searchTerm.split(/\s+/).join('&');
+
       conditions.push({
         OR: [
-          { title: { contains: searchTerm, mode: 'insensitive' } },
-          { bodyText: { contains: searchTerm, mode: 'insensitive' } },
+          { title: {search:formattedSearch } },
+          { bodyText: { search:formattedSearch } },
         ],
       });
     }

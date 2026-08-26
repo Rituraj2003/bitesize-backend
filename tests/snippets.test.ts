@@ -71,8 +71,8 @@ describe('BiteSize API Integration Tests', () => {
             AND: expect.arrayContaining([
               {
                 OR: [
-                  { title: { contains: 'react hooks', mode: 'insensitive' } },
-                  { bodyText: { contains: 'react hooks', mode: 'insensitive' } },
+                  { title: { search: 'react&hooks' } },
+                  { bodyText: { search: 'react&hooks' } },
                 ],
               },
             ]),

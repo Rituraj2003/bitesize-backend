@@ -8,8 +8,8 @@ const app: Express = express();
 
 // Middleware Configurations
 app.use(cors());
-app.use(express.json());
-app.use(requestLogger);
+app.use(express.json()); //populates req.body
+app.use(requestLogger);  // records request log time 
 
 // API Routes
 app.use('/api', snippetRouter);
