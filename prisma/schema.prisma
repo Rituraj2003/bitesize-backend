@@ -7,6 +7,16 @@ generator client {
   previewFeatures = ["fullTextSearchPostgres"]
 }
 
+model User{
+  id String @id @default(uuid())
+  email String @unique
+  password String 
+  name String?
+  snippets Snippet[]
+
+  createdAt DateTime @default(now())
+}
+
 model Snippet {
   id               String   @id @default(uuid())
   title            String
@@ -15,6 +25,11 @@ model Snippet {
   timesReviewed    Int      @default(0)
   lastReviewedDate DateTime @default(now())
   createdAt        DateTime @default(now())
+
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+
+  @@index([userId,lastReviewedDate])
 
   @@index([lastReviewedDate])
   @@index([createdAt])
