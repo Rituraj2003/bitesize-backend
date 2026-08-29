@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Express Backend Microservice Container
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bitesize_backend_container
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/bitesize_db?schema=public
+      - JWT_SECRET=super_secret_jwt_token_bitesize_key_2026
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+
+  # PostgreSQL Database Container
+  postgres:
+    image: postgres:16-alpine
+    container_name: bitesize_postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bitesize_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+volumes:
+  postgres_data:
