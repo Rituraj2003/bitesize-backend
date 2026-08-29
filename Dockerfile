@@ -11,8 +11,8 @@ COPY prisma ./prisma/
 
 RUN npm ci
 
-# Generate Prisma Client
-RUN npx prisma generate
+# Generate Prisma Client using pre-installed binary
+RUN ./node_modules/.bin/prisma generate
 
 # Copy source code and build
 COPY . .
@@ -28,12 +28,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=5000
 
-# Copy package manifests and production dependencies only
+# Copy package manifests and production dependencies
 COPY package*.json ./
 COPY prisma ./prisma/
 
 RUN npm ci --only=production
-RUN npx prisma generate
+RUN ./node_modules/.bin/prisma generate
 
 # Copy compiled JavaScript from builder stage
 COPY --from=builder /app/dist ./dist
