@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: hostj
     container_name: bitesize_backend_container
     ports:
       - "5050:5050"
