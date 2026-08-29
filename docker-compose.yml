@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Express Backend Microservice Container
   backend:
@@ -8,9 +6,9 @@ services:
       dockerfile: Dockerfile
     container_name: bitesize_backend_container
     ports:
-      - "5000:5000"
+      - "5050:5050"
     environment:
-      - PORT=5000
+      - PORT=5050
       - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/bitesize_db?schema=public
       - JWT_SECRET=super_secret_jwt_token_bitesize_key_2026
