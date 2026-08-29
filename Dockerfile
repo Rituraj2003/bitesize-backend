@@ -5,16 +5,16 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package manifests and install dependencies
+# Copy package manifests and install all dependencies
 COPY package*.json ./
 COPY prisma ./prisma/
 
 RUN npm ci
 
-# Generate Prisma Client using pre-installed binary
-RUN ./node_modules/.bin/prisma generate
+# Generate Prisma Client
+RUN npx prisma generate
 
-# Copy source code and build
+# Copy source code and transpile TypeScript to dist/
 COPY . .
 RUN npm run build
 
@@ -28,14 +28,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=5000
 
-# Copy package manifests and production dependencies
+# Copy package manifests and prisma schema
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci --only=production
-RUN ./node_modules/.bin/prisma generate
-
-# Copy compiled JavaScript from builder stage
+# Copy pre-generated node_modules and compiled dist from builder stage
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 
 # Expose server port
