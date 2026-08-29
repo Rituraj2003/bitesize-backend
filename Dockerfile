@@ -5,6 +5,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Force Node.js to prefer IPv4 DNS resolution (prevents EAI_AGAIN on QEMU/VPN networks)
+ENV NODE_OPTIONS="--dns-result-order=ipv4first"
+
 # Copy package manifests and install all dependencies
 COPY package*.json ./
 COPY prisma ./prisma/
@@ -27,6 +30,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=5000
+ENV NODE_OPTIONS="--dns-result-order=ipv4first"
 
 # Copy package manifests and prisma schema
 COPY package*.json ./
