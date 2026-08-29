@@ -1,12 +1,12 @@
 # ==========================================
 # STAGE 1: Build & Transpile TypeScript
 # ==========================================
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Force Node.js to prefer IPv4 DNS resolution (prevents EAI_AGAIN on QEMU/VPN networks)
-ENV NODE_OPTIONS="--dns-result-order=ipv4first"
+# Install OpenSSL for Prisma engine compatibility
+RUN apt-get update -y && apt-get install -y openssl
 
 # Copy package manifests and install all dependencies
 COPY package*.json ./
@@ -24,13 +24,15 @@ RUN npm run build
 # ==========================================
 # STAGE 2: Lightweight Production Runtime
 # ==========================================
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=5000
-ENV NODE_OPTIONS="--dns-result-order=ipv4first"
+
+# Install OpenSSL runtime dependency
+RUN apt-get update -y && apt-get install -y openssl
 
 # Copy package manifests and prisma schema
 COPY package*.json ./
